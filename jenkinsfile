@@ -36,8 +36,8 @@ pipeline {
                 sh 'cd spring-boot-package-war && mvn versions:set versions:commit -DnewVersion="0.0.$BUILD_NUMBER"'
               //  sh 'git tag -a tagName -m "Your tag comment"'
                 //sh 'git merge develop'
-              //  sh 'git commit -am "Merged develop branch to master'
-             //   sh "git push origin ariel_sol"
+                sh 'git commit -am "Merged develop branch to master'
+                sh 'git push origin ariel_sol'
                  sh 'cd spring-boot-package-war && mvn clean package'
                 sh 'echo "Result"'
                 //mvn versions:set versions:commit -DnewVersion="0.0.25"   mvn versions:set -DnewVersion="0.0.${build.number}
