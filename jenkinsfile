@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+ 
+    stages
+    {
+        stage('checkoutcode')
+        {
+            steps
+            {
+                sh 'echo "checkoutcode"'  //spring-boot-examples
+                git branch: 'ariel_sol', credentialsId: 'githubnew', url: 'https://github.com/arielmaor22/spring-boot-examples.git'
+            }
+    // Run the sh part in here
+        }
+        stage('compile')
+        {
+            steps
+            {
+                 sh 'echo "compile"'
+                 sh 'echo $PWD'
+                 
+                // sh 'mvn - f "/spring-boot-package-war/pom.xml" compile' //mvn compile mvn test
+                 sh 'cd spring-boot-package-war && mvn compile'
+                
+              
+              
+            }
+    // Run the sh part in here
+        }
+        stage('Results')
+        {
+            steps
+            {
+                sh 'echo "Result-------------------------------------------------------------------------------------------------"'
+                sh 'cd spring-boot-package-war && mvn test'
+                sh 'cd spring-boot-package-war && mvn versions:set versions:commit -DnewVersion="0.0.$BUILD_NUMBER"'
+                sh 'git tag -a tagName -m "Your tag comment"'
+                //sh 'git merge develop'
+                sh 'git commit -am "Merged develop branch to master'
+                sh "git push origin ariel_sol"
+                 sh 'cd spring-boot-package-war && mvn clean package'
+                sh 'echo "Result"'
+                //mvn versions:set versions:commit -DnewVersion="0.0.25"   mvn versions:set -DnewVersion="0.0.${build.number}
+                archiveArtifacts 'spring-boot-package-war/target/*.war'
+                slackSend (color: '#3EA652', message: "Success: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                //slackUploadFile filePath: 'build/libs/', initialComment: 'hello'
+            }
+    // Run the sh part in here
+        }
+    }
+}
